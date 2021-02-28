@@ -1,6 +1,7 @@
 Reproducible Research - Project 1
 Lerata Maloke
 February 28, 2021
+
 Introduction
 It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
 
@@ -43,12 +44,10 @@ head(Total_Steps, 10)
 ## 10: 2012-10-10  9900
 If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day.
 ggplot(Total_Steps, aes(x = steps)) + geom_histogram(fill = "blue", binwidth = 1000) + labs(title = "Daily Steps", x = "Steps", y = "Frequency")
+dev.off()
+
 ## Warning: Removed 8 rows containing non-finite values (stat_bin).
 
-
-dev.off()
-## null device 
-##           1
 Calculate and report the mean and median of the total number of steps taken per day
 Total_Steps[, .(Mean_Steps = mean(steps, na.rm = TRUE), Median_Steps = median(steps, na.rm = TRUE))]
 ##    Mean_Steps Median_Steps
@@ -57,15 +56,13 @@ What is the average daily activity pattern?
 Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = “𝚕”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 IntervalDT <- activityDT[, c(lapply(.SD, mean, na.rm = TRUE)), .SDcols = c("steps"), by = .(interval)] 
 ggplot(IntervalDT, aes(x = interval , y = steps)) + geom_line(color="blue", size=1) + labs(title = "Avg. Daily Steps", x = "Interval", y = "Avg. Steps per day")
-
-
 dev.off()
-## null device 
-##           1
+
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 IntervalDT[steps == max(steps), .(max_interval = interval)]
 ##    max_interval
 ## 1:          835
+
 Imputing missing values
 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with 𝙽𝙰s)
 activityDT[is.na(steps), .N ]
@@ -74,6 +71,7 @@ activityDT[is.na(steps), .N ]
 nrow(activityDT[is.na(steps),])
 ## [1] 2304
 Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
 # Filling in missing values with median of dataset. 
 activityDT[is.na(steps), "steps"] <- activityDT[, c(lapply(.SD, median, na.rm = TRUE)), .SDcols = c("steps")]
 Create a new dataset that is equal to the original dataset but with the missing data filled in.
@@ -86,14 +84,12 @@ Total_Steps[, .(Mean_Steps = mean(steps), Median_Steps = median(steps))]
 ##    Mean_Steps Median_Steps
 ## 1:    9354.23        10395
 ggplot(Total_Steps, aes(x = steps)) + geom_histogram(fill = "blue", binwidth = 1000) + labs(title = "Daily Steps", x = "Steps", y = "Frequency")
-
-
 dev.off()
-## null device 
-##           1
+
 Type of Estimate	Mean_Steps	Median_Steps
 First Part (with na)	10765	10765
 Second Part (filing in na with median)	9354.23	10395
+
 Are there differences in activity patterns between weekdays and weekends?
 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 # Just recreating activityDT from scratch then making the new factor variable. (No need to, just want to be clear on what the entire process is.) 
@@ -119,8 +115,6 @@ Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = “𝚕
 activityDT[is.na(steps), "steps"] <- activityDT[, c(lapply(.SD, median, na.rm = TRUE)), .SDcols = c("steps")]
 IntervalDT <- activityDT[, c(lapply(.SD, mean, na.rm = TRUE)), .SDcols = c("steps"), by = .(interval, `weekday or weekend`)] 
 ggplot(IntervalDT , aes(x = interval , y = steps, color = `weekday or weekend`)) + geom_line() + labs(title = "Avg. Daily Steps by Weektype", x = "Interval", y = "No. of Steps") + facet_wrap(~`weekday or weekend` , ncol = 1, nrow = 2)
-
-
 dev.off()
 ## null device 
 ##           1
