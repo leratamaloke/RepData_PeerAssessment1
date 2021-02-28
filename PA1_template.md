@@ -24,7 +24,7 @@ steps: Number of steps taking in a 5-minute interval (missing values are coded a
 Unzip data to obtain a csv file.
 
 ```{r}
-library(data.table)
+library("data.table")
 library(ggplot2)
 fileUrl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 download.file(fileUrl, destfile = paste0(getwd(), '/repdata%2Fdata%2Factivity.zip'), method = "curl")
@@ -50,7 +50,6 @@ head(Total_Steps, 10)
 
 ```{r}
 ggplot(Total_Steps, aes(x = steps)) + geom_histogram(fill = "blue", binwidth = 1000) + labs(title = "Daily Steps", x = "Steps", y = "Frequency")
-dev.off()
 ```
 
 3.  Calculate and report the mean and median of the total number of steps taken per day
@@ -66,7 +65,6 @@ Total_Steps[, .(Mean_Steps = mean(steps, na.rm = TRUE), Median_Steps = median(st
 ```{r}
 IntervalDT <- activityDT[, c(lapply(.SD, mean, na.rm = TRUE)), .SDcols = c("steps"), by = .(interval)] 
 ggplot(IntervalDT, aes(x = interval , y = steps)) + geom_line(color="blue", size=1) + labs(title = "Avg. Daily Steps", x = "Interval", y = "Avg. Steps per day")
-dev.off()
 ```
 
 2.  Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
@@ -106,7 +104,6 @@ Total_Steps <- activityDT[, c(lapply(.SD, sum)), .SDcols = c("steps"), by = .(da
 # mean and median total number of steps taken per day
 Total_Steps[, .(Mean_Steps = mean(steps), Median_Steps = median(steps))]
 ggplot(Total_Steps, aes(x = steps)) + geom_histogram(fill = "blue", binwidth = 1000) + labs(title = "Daily Steps", x = "Steps", y = "Frequency")
-dev.off()
 ```
 
 | Type of Estimate                       | Mean_Steps | Median_Steps |
@@ -135,5 +132,4 @@ head(activityDT, 10)
 activityDT[is.na(steps), "steps"] <- activityDT[, c(lapply(.SD, median, na.rm = TRUE)), .SDcols = c("steps")]
 IntervalDT <- activityDT[, c(lapply(.SD, mean, na.rm = TRUE)), .SDcols = c("steps"), by = .(interval, `weekday or weekend`)] 
 ggplot(IntervalDT , aes(x = interval , y = steps, color = `weekday or weekend`)) + geom_line() + labs(title = "Avg. Daily Steps by Weektype", x = "Interval", y = "No. of Steps") + facet_wrap(~`weekday or weekend` , ncol = 1, nrow = 2)
-dev.off()
 ```
